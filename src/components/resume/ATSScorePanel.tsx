@@ -28,7 +28,7 @@ export function ATSScorePanel() {
             {suggestions.length > 0 && (
                 <div className="space-y-2 pt-2">
                     <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                        <Sparkles className="h-3 w-3" /> Improvements
+                        <Sparkles className="h-3 w-3" /> Top 3 Improvements
                     </div>
                     <ul className="space-y-2">
                         {suggestions.map((suggestion, idx) => (

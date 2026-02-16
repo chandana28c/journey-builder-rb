@@ -43,6 +43,7 @@ export interface ResumeData {
     github: string;
     linkedin: string;
   };
+  template: "classic" | "modern" | "minimal";
 }
 
 const emptyResume: ResumeData = {
@@ -53,6 +54,7 @@ const emptyResume: ResumeData = {
   projects: [],
   skills: "",
   links: { github: "", linkedin: "" },
+  template: "modern",
 };
 
 const sampleResume: ResumeData = {
@@ -105,9 +107,9 @@ const sampleResume: ResumeData = {
   ],
   skills: "React, TypeScript, Node.js, Python, PostgreSQL, Docker, AWS, Git",
   links: {
-    github: "https://github.com/ananya",
     linkedin: "https://linkedin.com/in/ananya-sharma",
   },
+  template: "modern",
 };
 
 interface ResumeContextType {

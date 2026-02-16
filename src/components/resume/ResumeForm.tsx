@@ -1,26 +1,18 @@
-import { useResume, genId } from "@/contexts/ResumeContext";
-import type { Education, Experience, Project } from "@/contexts/ResumeContext";
+import { useResume } from "@/contexts/ResumeContext";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2, Sparkles } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Plus, Trash2, GripVertical } from "lucide-react";
+import { BulletGuidance } from "./BulletGuidance";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function ResumeForm() {
-  const { resume, updateField, loadSampleData } = useResume();
-
-  const updatePersonal = (key: string, value: string) =>
-    updateField("personalInfo", { ...resume.personalInfo, [key]: value });
-
-  const updateLinks = (key: string, value: string) =>
-    updateField("links", { ...resume.links, [key]: value });
-
-  // Education helpers
-  const addEducation = () =>
-    updateField("education", [
-      ...resume.education,
-      { id: genId("edu"), institution: "", degree: "", field: "", startDate: "", endDate: "" },
-    ]);
+  updateField("education", [
+    ...resume.education,
+    { id: genId("edu"), institution: "", degree: "", field: "", startDate: "", endDate: "" },
+  ]);
   const removeEducation = (id: string) =>
     updateField("education", resume.education.filter((e) => e.id !== id));
   const updateEducation = (id: string, key: keyof Education, value: string) =>
@@ -130,7 +122,16 @@ export function ResumeForm() {
                 <Input placeholder="Start Date" value={exp.startDate} onChange={(e) => updateExperience(exp.id, "startDate", e.target.value)} />
                 <Input placeholder="End Date" value={exp.endDate} onChange={(e) => updateExperience(exp.id, "endDate", e.target.value)} />
               </div>
-              <Textarea placeholder="Description" value={exp.description} onChange={(e) => updateExperience(exp.id, "description", e.target.value)} className="min-h-[80px]" />
+              <div className="grid gap-2">
+                <Label>Description</Label>
+                <Textarea
+                  placeholder="Describe your responsibilities and achievements..."
+                  value={exp.description}
+                  onChange={(e) => updateExperience(exp.id, "description", e.target.value)}
+                  className="min-h-[100px]"
+                />
+                <BulletGuidance text={exp.description} />
+              </div>
             </div>
           ))}
         </CardContent>
