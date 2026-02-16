@@ -1,4 +1,5 @@
-import { useResume } from "@/contexts/ResumeContext";
+import { useResume, genId } from "@/contexts/ResumeContext";
+import type { Education, Experience, Project } from "@/contexts/ResumeContext";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -9,10 +10,20 @@ import { BulletGuidance } from "./BulletGuidance";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function ResumeForm() {
-  updateField("education", [
-    ...resume.education,
-    { id: genId("edu"), institution: "", degree: "", field: "", startDate: "", endDate: "" },
-  ]);
+  const { resume, updateField, loadSampleData, updateField: updateResumeField } = useResume();
+
+  const updatePersonal = (key: string, value: string) =>
+    updateField("personalInfo", { ...resume.personalInfo, [key]: value });
+
+  const updateLinks = (key: string, value: string) =>
+    updateField("links", { ...resume.links, [key]: value });
+
+  // Education helpers
+  const addEducation = () =>
+    updateField("education", [
+      ...resume.education,
+      { id: genId("edu"), institution: "", degree: "", field: "", startDate: "", endDate: "" },
+    ]);
   const removeEducation = (id: string) =>
     updateField("education", resume.education.filter((e) => e.id !== id));
   const updateEducation = (id: string, key: keyof Education, value: string) =>
