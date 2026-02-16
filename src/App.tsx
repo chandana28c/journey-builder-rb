@@ -1,34 +1,42 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { BuildProvider } from './context/BuildStateContext'; // Verified path
-import PremiumLayout from './layouts/PremiumLayout'; // Verified path
-import StepPage from './pages/StepPage'; // Verified path
-import ProofPage from './pages/ProofPage'; // Verified path
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BuildTrackProvider } from "@/contexts/BuildTrackContext";
+import { ResumeProvider } from "@/contexts/ResumeContext";
+import HomePage from "./pages/HomePage";
+import BuilderPage from "./pages/BuilderPage";
+import PreviewPage from "./pages/PreviewPage";
+import ProofPageResume from "./pages/ProofPageResume";
+import NotFound from "./pages/NotFound";
+import BuildStepPage from "./pages/rb/BuildStepPage";
+import ProofPage from "./pages/rb/ProofPage";
 
-function App() {
-  return (
-    <BuildProvider>
+const queryClient = new QueryClient();
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Navigate to="/rb/01-problem" replace />} />
-
-          <Route path="/rb" element={<PremiumLayout />}>
-            <Route index element={<Navigate to="01-problem" replace />} />
-
-            <Route path="01-problem" element={<StepPage />} />
-            <Route path="02-market" element={<StepPage />} />
-            <Route path="03-architecture" element={<StepPage />} />
-            <Route path="04-hld" element={<StepPage />} />
-            <Route path="05-lld" element={<StepPage />} />
-            <Route path="06-build" element={<StepPage />} />
-            <Route path="07-test" element={<StepPage />} />
-            <Route path="08-ship" element={<StepPage />} />
-
-            <Route path="proof" element={<ProofPage />} />
-          </Route>
-        </Routes>
+        <ResumeProvider>
+          <BuildTrackProvider>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/builder" element={<BuilderPage />} />
+              <Route path="/preview" element={<PreviewPage />} />
+              <Route path="/proof" element={<ProofPageResume />} />
+              <Route path="/rb/proof" element={<ProofPage />} />
+              <Route path="/rb/:slug" element={<BuildStepPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BuildTrackProvider>
+        </ResumeProvider>
       </BrowserRouter>
-    </BuildProvider>
-  );
-}
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
 export default App;
