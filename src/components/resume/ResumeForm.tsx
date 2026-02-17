@@ -5,12 +5,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Plus, Trash2, GripVertical } from "lucide-react";
+import { Plus, Trash2, Sparkles } from "lucide-react";
 import { BulletGuidance } from "./BulletGuidance";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function ResumeForm() {
-  const { resume, updateField, loadSampleData, updateField: updateResumeField } = useResume();
+  const { resume, updateField, loadSampleData } = useResume();
 
   const updatePersonal = (key: string, value: string) =>
     updateField("personalInfo", { ...resume.personalInfo, [key]: value });
@@ -56,9 +56,25 @@ export function ResumeForm() {
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold">Resume Builder</h2>
         <Button variant="outline" size="sm" onClick={loadSampleData}>
-          <Sparkles className="h-3.5 w-3.5" /> Load Sample Data
+          <Sparkles className="h-3.5 w-3.5 mr-1" /> Load Sample Data
         </Button>
       </div>
+
+      {/* Template Selector */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">Template</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Tabs value={resume.template} onValueChange={(v) => updateField("template", v as "classic" | "modern" | "minimal")}>
+            <TabsList className="w-full">
+              <TabsTrigger value="classic" className="flex-1">Classic</TabsTrigger>
+              <TabsTrigger value="modern" className="flex-1">Modern</TabsTrigger>
+              <TabsTrigger value="minimal" className="flex-1">Minimal</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </CardContent>
+      </Card>
 
       {/* Personal Info */}
       <Card>
@@ -167,6 +183,7 @@ export function ResumeForm() {
                 <Input placeholder="Tech Stack" value={proj.techStack} onChange={(e) => updateProject(proj.id, "techStack", e.target.value)} />
               </div>
               <Textarea placeholder="Description" value={proj.description} onChange={(e) => updateProject(proj.id, "description", e.target.value)} className="min-h-[60px]" />
+              <BulletGuidance text={proj.description} />
               <Input placeholder="Link" value={proj.link} onChange={(e) => updateProject(proj.id, "link", e.target.value)} />
             </div>
           ))}

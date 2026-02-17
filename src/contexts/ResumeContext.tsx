@@ -107,6 +107,7 @@ const sampleResume: ResumeData = {
   ],
   skills: "React, TypeScript, Node.js, Python, PostgreSQL, Docker, AWS, Git",
   links: {
+    github: "https://github.com/ananya-sharma",
     linkedin: "https://linkedin.com/in/ananya-sharma",
   },
   template: "modern",
