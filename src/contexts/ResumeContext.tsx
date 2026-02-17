@@ -23,8 +23,15 @@ export interface Project {
   id: string;
   name: string;
   description: string;
-  techStack: string;
+  techStack: string[];
   link: string;
+  githubLink: string;
+}
+
+export interface SkillsData {
+  technical: string[];
+  soft: string[];
+  tools: string[];
 }
 
 export interface ResumeData {
@@ -38,7 +45,7 @@ export interface ResumeData {
   education: Education[];
   experience: Experience[];
   projects: Project[];
-  skills: string;
+  skills: SkillsData;
   links: {
     github: string;
     linkedin: string;
@@ -52,7 +59,7 @@ const emptyResume: ResumeData = {
   education: [],
   experience: [],
   projects: [],
-  skills: "",
+  skills: { technical: [], soft: [], tools: [] },
   links: { github: "", linkedin: "" },
   template: "modern",
 };
@@ -101,17 +108,45 @@ const sampleResume: ResumeData = {
       id: "proj-1",
       name: "AI Resume Builder",
       description: "A smart resume builder with ATS scoring and live preview.",
-      techStack: "React, TypeScript, Tailwind CSS",
+      techStack: ["React", "TypeScript", "Tailwind CSS"],
       link: "https://github.com/ananya/resume-builder",
+      githubLink: "https://github.com/ananya/resume-builder",
     },
   ],
-  skills: "React, TypeScript, Node.js, Python, PostgreSQL, Docker, AWS, Git",
+  skills: {
+    technical: ["React", "TypeScript", "Node.js", "Python", "PostgreSQL"],
+    soft: ["Team Leadership", "Problem Solving"],
+    tools: ["Docker", "AWS", "Git"],
+  },
   links: {
     github: "https://github.com/ananya-sharma",
     linkedin: "https://linkedin.com/in/ananya-sharma",
   },
   template: "modern",
 };
+
+// Helper: migrate old string-based skills/techStack from localStorage
+function migrateResume(data: any): ResumeData {
+  // Migrate skills from string to object
+  if (typeof data.skills === "string") {
+    const items = data.skills.split(",").map((s: string) => s.trim()).filter((s: string) => s);
+    data.skills = { technical: items, soft: [], tools: [] };
+  }
+  if (!data.skills || typeof data.skills !== "object") {
+    data.skills = { technical: [], soft: [], tools: [] };
+  }
+  // Migrate projects techStack from string to array
+  if (Array.isArray(data.projects)) {
+    data.projects = data.projects.map((p: any) => ({
+      ...p,
+      techStack: typeof p.techStack === "string"
+        ? p.techStack.split(",").map((s: string) => s.trim()).filter((s: string) => s)
+        : (p.techStack || []),
+      githubLink: p.githubLink || "",
+    }));
+  }
+  return data as ResumeData;
+}
 
 interface ResumeContextType {
   resume: ResumeData;
@@ -140,7 +175,7 @@ export function ResumeProvider({ children }: { children: React.ReactNode }) {
     const savedData = localStorage.getItem("resumeBuilderData");
     if (savedData) {
       try {
-        setResume(JSON.parse(savedData));
+        setResume(migrateResume(JSON.parse(savedData)));
       } catch (e) {
         console.error("Failed to parse resume data", e);
       }
@@ -168,4 +203,9 @@ export function useResume() {
 let idCounter = 0;
 export function genId(prefix: string) {
   return `${prefix}-${++idCounter}-${Date.now()}`;
+}
+
+// Flatten all skills into a single array (utility for scoring/export)
+export function getAllSkills(skills: SkillsData): string[] {
+  return [...skills.technical, ...skills.soft, ...skills.tools];
 }

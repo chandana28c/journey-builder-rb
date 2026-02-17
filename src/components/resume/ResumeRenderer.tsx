@@ -1,5 +1,6 @@
 import { ResumeData } from "@/contexts/ResumeContext";
 import { cn } from "@/lib/utils";
+import { ExternalLink, Github } from "lucide-react";
 
 interface ResumeRendererProps {
     resume: ResumeData;
@@ -9,7 +10,6 @@ interface ResumeRendererProps {
 export function ResumeRenderer({ resume, className }: ResumeRendererProps) {
     const { template } = resume;
 
-    // Common Section Components
     const Header = () => {
         const { name, email, phone, location } = resume.personalInfo;
         const { links } = resume;
@@ -36,7 +36,6 @@ export function ResumeRenderer({ resume, className }: ResumeRendererProps) {
                 </div>
             );
         }
-        // Modern (Default)
         return (
             <div className="border-b border-gray-200 pb-5 text-center mb-6">
                 <h1 className="text-2xl font-bold tracking-tight text-gray-900">{name}</h1>
@@ -58,11 +57,10 @@ export function ResumeRenderer({ resume, className }: ResumeRendererProps) {
         if (template === "minimal") {
             return (
                 <h2 className="mb-4 text-xs font-mono font-bold uppercase tracking-widest text-gray-400">
-          // {title}
+                    // {title}
                 </h2>
             );
         }
-        // Modern
         return (
             <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-gray-500">
                 {title}
@@ -96,7 +94,6 @@ export function ResumeRenderer({ resume, className }: ResumeRendererProps) {
                 </div>
             );
         }
-        // Modern
         return (
             <div className="mb-5">
                 <div className="flex items-baseline justify-between mb-1">
@@ -109,7 +106,14 @@ export function ResumeRenderer({ resume, className }: ResumeRendererProps) {
         );
     };
 
-    // Render Layout
+    const SkillPill = ({ skill }: { skill: string }) => (
+        <span className="inline-block rounded-sm border border-gray-200 bg-gray-50 px-2 py-0.5 text-xs text-gray-700">
+            {skill}
+        </span>
+    );
+
+    const allSkillsEmpty = resume.skills.technical.length === 0 && resume.skills.soft.length === 0 && resume.skills.tools.length === 0;
+
     const containerClass = cn(
         "mx-auto w-full bg-white text-left overflow-hidden min-h-[11in] shadow-sm",
         template === "classic" ? "font-serif p-12 max-w-[8.5in] border-2 border-gray-100" : "",
@@ -142,15 +146,35 @@ export function ResumeRenderer({ resume, className }: ResumeRendererProps) {
                 <section className="mb-8">
                     <SectionTitle title="Projects" />
                     {resume.projects.map(proj => (
-                        <div key={proj.id} className={template === "minimal" ? "mb-6 text-sm" : "mb-4"}>
-                            <div className="flex items-baseline gap-2 mb-1">
-                                <span className={template === "classic" ? "font-bold text-black" : "font-semibold text-gray-900"}>{proj.name}</span>
-                                {proj.techStack && (
-                                    <span className="text-xs text-gray-500 italic">({proj.techStack})</span>
-                                )}
+                        <div key={proj.id} className={cn("mb-5 rounded border border-gray-100 p-3", template === "minimal" ? "text-sm" : "")}>
+                            <div className="flex items-baseline justify-between mb-1">
+                                <span className={template === "classic" ? "font-bold text-black" : "font-semibold text-gray-900"}>
+                                    {proj.name}
+                                </span>
+                                <div className="flex items-center gap-2">
+                                    {proj.link && (
+                                        <span className="text-xs text-gray-500 flex items-center gap-0.5">
+                                            <ExternalLink className="h-3 w-3" /> Live
+                                        </span>
+                                    )}
+                                    {proj.githubLink && (
+                                        <span className="text-xs text-gray-500 flex items-center gap-0.5">
+                                            <Github className="h-3 w-3" /> Code
+                                        </span>
+                                    )}
+                                </div>
                             </div>
                             {proj.description && (
-                                <p className={template === "minimal" ? "text-xs text-gray-700" : "text-sm leading-relaxed text-gray-600"}>{proj.description}</p>
+                                <p className={template === "minimal" ? "text-xs text-gray-700 mb-2" : "text-sm leading-relaxed text-gray-600 mb-2"}>
+                                    {proj.description}
+                                </p>
+                            )}
+                            {proj.techStack.length > 0 && (
+                                <div className="flex flex-wrap gap-1">
+                                    {proj.techStack.map((tech, i) => (
+                                        <SkillPill key={i} skill={tech} />
+                                    ))}
+                                </div>
                             )}
                         </div>
                     ))}
@@ -174,12 +198,35 @@ export function ResumeRenderer({ resume, className }: ResumeRendererProps) {
                 </section>
             )}
 
-            {resume.skills && (
+            {!allSkillsEmpty && (
                 <section>
                     <SectionTitle title="Skills" />
-                    <p className={template === "minimal" ? "text-xs text-gray-700 leading-loose" : "text-sm text-gray-600"}>
-                        {resume.skills}
-                    </p>
+                    <div className="space-y-3">
+                        {resume.skills.technical.length > 0 && (
+                            <div>
+                                <div className="text-xs font-medium text-gray-500 mb-1">Technical</div>
+                                <div className="flex flex-wrap gap-1">
+                                    {resume.skills.technical.map((s, i) => <SkillPill key={i} skill={s} />)}
+                                </div>
+                            </div>
+                        )}
+                        {resume.skills.soft.length > 0 && (
+                            <div>
+                                <div className="text-xs font-medium text-gray-500 mb-1">Soft Skills</div>
+                                <div className="flex flex-wrap gap-1">
+                                    {resume.skills.soft.map((s, i) => <SkillPill key={i} skill={s} />)}
+                                </div>
+                            </div>
+                        )}
+                        {resume.skills.tools.length > 0 && (
+                            <div>
+                                <div className="text-xs font-medium text-gray-500 mb-1">Tools & Technologies</div>
+                                <div className="flex flex-wrap gap-1">
+                                    {resume.skills.tools.map((s, i) => <SkillPill key={i} skill={s} />)}
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </section>
             )}
         </div>
