@@ -104,3 +104,50 @@
     font-family: 'Inter', system-ui, sans-serif;
   }
 }
+
+/* Print styles for resume export */
+@media print {
+  @page {
+    margin: 0.5in;
+    size: letter;
+  }
+
+  body {
+    background: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Hide everything except resume */
+  .print\\:hidden {
+    display: none !important;
+  }
+
+  #resume-print-area {
+    margin: 0;
+    padding: 0;
+  }
+
+  #resume-print-area > * {
+    background: white !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    max-width: 100% !important;
+    min-height: auto !important;
+  }
+
+  /* Page break rules */
+  section {
+    break-inside: avoid;
+  }
+
+  h2, h3 {
+    break-after: avoid;
+  }
+
+  p, li, div {
+    orphans: 3;
+    widows: 3;
+  }
+}
